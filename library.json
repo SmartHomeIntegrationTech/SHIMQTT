@@ -1,0 +1,24 @@
+{
+  "name": "SHIMQTT",
+  "description": "An implementation of MQTT for SHIT",
+  "keywords": [
+    "SmartHome"
+  ],
+  "authors": [
+    {
+      "name": "Karsten Becker",
+      "email": "kb@shi.technology",
+      "url": "https://shi.technology",
+      "maintainer": true
+    }
+  ],
+  "version": "0.2.1",
+  "frameworks": "arduino",
+  "platforms": "espressif32",
+  "dependencies": {
+    "AsyncMqttClient": "^0.8.2",
+    "AsyncTCP": "^1.1.1",
+    "SmartHomeIntegrationTech": "^0.2.1",
+    "WiFi": "1.0"
+  }
+}
