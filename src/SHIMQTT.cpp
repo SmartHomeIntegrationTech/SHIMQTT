@@ -93,9 +93,9 @@ void SHI::MQTT::setupCommunication() {
   nodeName.toLowerCase();
   homie.strID = nodeName;
 
-  homie.strMqttServerIP = "192.168.188.250";
-  homie.strMqttUserName = "esphomie";
-  homie.strMqttPassword = "Jtsvc9TsP5NGfek8";
+  homie.strMqttServerIP = String(config.mqttServerIP.c_str());
+  homie.strMqttUserName = String(config.mqttServerUserName.c_str());
+  homie.strMqttPassword = String(config.mqttServerPassword.c_str());
 
   HomieHierachyVisitor visitor(&homie, &nameToProps);
   SHI::hw->accept(visitor);
@@ -137,13 +137,29 @@ void SHI::MQTT::newReading(const SHI::MeasurementBundle &reading) {
   char buf[10 + 3 + 6 + 2];  // 6 digits for ns plus 0 and whitespace
   snprintf(buf, sizeof(buf), " %d%03d000000", sPart, msPart);
   influxFormat += buf;
-  String topic = String("sensors/") + reading.src->getQualifiedName().c_str() +
-                 "/influxformat";
+  String topic = String(config.sensorTopic.c_str()) + "/" +
+                 reading.src->getQualifiedName().c_str() +
+                 config.sensorPostTopic.c_str();
   String payload = influxFormat;
   // SHI_LOGINFO(std::string("Influx representation: ") + topic.c_str() + " " +
   //            payload.c_str());
   homie.PublishDirect(topic, 1, false, payload);
 }
 void SHI::MQTT::newStatus(const SHI::Measurement &status, SHIObject *src) {
-  updateData(status);
+  auto presentation = updateData(status);
+  if (presentation == "") return;
+  auto influxFormat = String(src->getName().c_str()) +
+                      ",qfn=" + src->getQualifiedName().c_str() + " ";
+  influxFormat += presentation;
+  auto now = SHI::hw->getEpochInMs();
+  int msPart = now % 1000;   // 10 digits
+  int sPart = now / 1000;    // 3 digits
+  char buf[10 + 3 + 6 + 2];  // 6 digits for ns plus 0 and whitespace
+  snprintf(buf, sizeof(buf), " %d%03d000000", sPart, msPart);
+  influxFormat += buf;
+  String topic = String(config.sensorTopic.c_str()) + "/" +
+                 src->getQualifiedName().c_str() +
+                 config.sensorPostTopic.c_str();
+  String payload = influxFormat;
+  homie.PublishDirect(topic, 1, false, payload);
 }
