@@ -6,7 +6,7 @@
 
 // WARNING, this is an automatically generated file!
 // Don't change anything in here.
-// Last update 2020-03-15
+// Last update 2020-03-25
 
 # include <iostream>
 # include <string>
@@ -15,8 +15,12 @@
 # include "SHIMQTT.h"
 // Configuration implementation for class SHI::MQTTConfig
 
+namespace {
+    
+}  // namespace
+
 SHI::MQTTConfig::MQTTConfig(const JsonObject &obj):
-       mqttServerIP(obj["mqttServerIP"] | "192.168.188.250"),
+      mqttServerIP(obj["mqttServerIP"] | "192.168.188.250"),
       mqttServerUserName(obj["mqttServerUserName"] | "esphomie"),
       mqttServerPassword(obj["mqttServerPassword"] | "Jtsvc9TsP5NGfek8"),
       sensorTopic(obj["sensorTopic"] | "sensors"),
